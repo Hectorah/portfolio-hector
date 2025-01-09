@@ -49,3 +49,29 @@ function efectoHabilidades(){
 window.onscroll = function(){
     efectoHabilidades();
 } 
+
+//alertas del index
+      const urlParams = new URLSearchParams(window.location.search);
+      const mensaje = urlParams.get('mensaje');
+
+      if (mensaje === '1') {
+        Swal.fire({
+          title: 'Mensaje enviado con exito',
+          icon: 'success', // 'warning', 'error', 'info', 'question', 'sucess'
+          timer: 5000, // Cerrar automáticamente después de 3 segundos (en milisegundos)
+          timerProgressBar: true, // Mostrar una barra de progreso del tiempo
+          confirmButtonText: 'Aceptar'
+        });
+        // Limpia el parámetro de la URL para que no se muestre la alerta al recargar
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (mensaje === 'error') {
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al enviar el mensaje.',
+          icon: 'error', // 'warning', 'error', 'info', 'question', 'sucess'
+          timer: 3000,
+          timerProgressBar: true,
+          confirmButtonText: 'Aceptar'
+        });
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
