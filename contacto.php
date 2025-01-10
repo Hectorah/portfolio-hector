@@ -1,36 +1,52 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php'; // Ruta al autoload de Composer
+
+require 'vendor/autoload.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // ... (obtener y validar datos como en el ejemplo anterior)
-    $email = $_POST['email'];
-    $name = $_POST['name'];
-    $asunto = $_POST['asunto'];
-    $contenido = $_POST['contenido'];
+    //validaciones
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+    $name = htmlspecialchars(trim($_POST['name']));
+    $asunto = htmlspecialchars(trim($_POST['asunto']));
+    $contenido = htmlspecialchars(trim($_POST['contenido']));
 
-    $mail = new PHPMailer(true); // `true` habilita las excepciones
+    $mail = new PHPMailer(true);
+
     try {
-        // Configuración del servidor SMTP (reemplazar con tus credenciales)
+        $mail->SMTPDebug = 2; // Habilita la depuración (MUY IMPORTANTE PARA VER EL ERROR EXACTO)
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
+
+        // Configuración SMTP (Gmail)
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com'; // Servidor SMTP (ej: smtp.gmail.com)
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'hectorher149@gmail.com'; // Tu correo electrónico
-        $mail->Password   = 'uroj yvft umso asbi'; // Tu contraseña
-        $mail->SMTPSecure = 'ssl';
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'hectorher149@gmail.com';
+        $mail->Password = 'uroj yvft umso asbi'; // Contraseña de aplicación (NECESARIO PARA GMAIL)
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Usar SMTPS (SSL/TLS) con el puerto 465
         $mail->Port = 465;
+
         // Configuración del correo
         $mail->setFrom($email, $name);
-        $mail->addAddress('hectorher149@gmail.com'); // Destinatario
+        $mail->addAddress('hectorher149@gmail.com');
         $mail->Subject = $asunto;
-        $mail->Body    = $contenido;
+        $mail->Body = $contenido;
+        $mail->AltBody = strip_tags($contenido); // Añade texto alternativo para clientes sin HTML
 
-        $mail->send();
-         header("Location: index.html?mensaje=1"); // Redireccionar con un parámetro
+        if ($mail->send()) {
+            header("Location: index.html?mensaje=1");
+            exit; // Detiene la ejecución después de la redirección
+        }else {
+            echo 'Error al enviar el mensaje: ' . $mail->ErrorInfo;
+        }
+    
     } catch (Exception $e) {
-        echo "El mensaje no se pudo enviar. Error de Mailer: {$mail->ErrorInfo}";
+        echo "Excepción capturada: " . $e->getMessage();
     }
 }
 ?>
