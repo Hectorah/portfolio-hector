@@ -75,3 +75,22 @@ window.onscroll = function(){
         });
         window.history.replaceState({}, document.title, window.location.pathname);
       }
+
+const imagenes = document.querySelectorAll('img[loading="lazy"]');
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src; // Carga la imagen desde el atributo data-src
+            img.removeAttribute('data-src'); // Elimina el atributo data-src
+            observer.unobserve(img); // Deja de observar la imagen
+        }
+    });
+});
+
+imagenes.forEach(imagen => {
+    imagen.dataset.src = imagen.src; // Guarda la URL original en data-src
+    imagen.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='; // Placeholder ligero (opcional)
+    observer.observe(imagen);
+});
