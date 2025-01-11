@@ -41,11 +41,11 @@ html{
     color: #fff;
     margin: 0 15px;
     padding: 3px;
-    transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    transition: .5s;
+    text-decoration: none;
 }
 .contenedor-header header nav ul li a:hover{
     color: #1CB698;
-     transform: scale(1.1);
 }
 .nav-responsive{
     background-color: #1CB698;
